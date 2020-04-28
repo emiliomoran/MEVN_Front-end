@@ -3,7 +3,7 @@
     <v-flex>
       <v-data-table
         :headers="headers"
-        :items="desserts"
+        :items="categories"
         :search="search"
         class="elevation-1"
       >
@@ -13,8 +13,8 @@
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field
-              v-model="search"
               class="text-xs-center"
+              v-model="search"
               append-icon="search"
               label="Search"
               single-line
@@ -29,44 +29,33 @@
                 <v-card-title>
                   <span class="headline">{{ formTitle }}</span>
                 </v-card-title>
-
                 <v-card-text>
                   <v-container>
-                    <v-row>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="editedItem.name"
-                          label="Dessert name"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="editedItem.calories"
-                          label="Calories"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="editedItem.fat"
-                          label="Fat (g)"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="editedItem.carbs"
-                          label="Carbs (g)"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="editedItem.protein"
-                          label="Protein (g)"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
+                    <v-form ref="form" v-model="valid">
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field
+                            v-model="editedItem.name"
+                            :counter="50"
+                            :rules="nameRules"
+                            label="Name"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field
+                            v-model="editedItem.description"
+                            :counter="255"
+                            :rules="descriptionRules"
+                            label="Description"
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-form>
                   </v-container>
                 </v-card-text>
-
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="close"
@@ -76,15 +65,64 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
+            <!--Change state category modal-->
+            <v-dialog v-model="modal" max-width="500px">
+              <v-card>
+                <v-card-title>
+                  <span v-if="stateItem.action === 1" class="headline"
+                    >Activate category</span
+                  >
+                  <span v-if="stateItem.action === 2" class="headline"
+                    >Deactivate category</span
+                  >
+                </v-card-title>
+                <v-card-text>
+                  Are you sure
+                  <span v-if="stateItem.action === 1">activate</span>
+                  <span v-if="stateItem.action === 2">deactivate</span>
+                  the category {{ stateItem.name }}
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="grey darken-1" text @click="closeModal"
+                    >Cancel</v-btn
+                  >
+                  <v-btn
+                    v-if="stateItem.action === 1"
+                    color="red darken-1"
+                    text
+                    @click="activate"
+                    >Activate</v-btn
+                  >
+                  <v-btn
+                    v-if="stateItem.action === 2"
+                    color="red darken-1"
+                    text
+                    @click="deactivate"
+                    >Deactivate</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-toolbar>
         </template>
+        <template v-slot:item.state="{ item }">
+          <div v-if="item.state">
+            <span class="blue--text">Active</span>
+          </div>
+          <div v-else>
+            <span class="red--text">Inactive</span>
+          </div>
+        </template>
         <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon small @click="deleteItem(item)">
-            mdi-delete
-          </v-icon>
+          <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
+          <template v-if="item.state">
+            <v-icon small @click="activateDeactivate(2, item)">block</v-icon>
+          </template>
+          <template v-else>
+            <v-icon small @click="activateDeactivate(1, item)">check</v-icon>
+          </template>
+          <v-icon small @click="deleteItem(item)">delete</v-icon>
         </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -93,44 +131,55 @@
     </v-flex>
   </v-layout>
 </template>
+
 <script>
+import axios from "axios";
 export default {
   data: () => ({
     dialog: false,
     search: "",
+    categories: [],
     headers: [
-      {
-        text: "Dessert (100g serving)",
-        align: "start",
-        sortable: false,
-        value: "name",
-      },
-      { text: "Calories", value: "calories" },
-      { text: "Fat (g)", value: "fat" },
-      { text: "Carbs (g)", value: "carbs" },
-      { text: "Protein (g)", value: "protein" },
+      { text: "Name", value: "name", sortable: true },
+      { text: "Description", value: "description", sortable: false },
+      { text: "State", value: "state", sortable: false },
       { text: "Actions", value: "actions", sortable: false },
     ],
-    desserts: [],
     editedIndex: -1,
     editedItem: {
+      _id: "",
       name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      description: "",
     },
     defaultItem: {
+      _id: "",
       name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      description: "",
+    },
+    valid: true,
+    nameRules: [
+      (v) => !!v || "Name is required",
+      (v) => (v && v.length <= 50) || "Name must be less than 50 characters",
+    ],
+    descriptionRules: [
+      (v) => v.length <= 255 || "Description must be less than 255 characters",
+    ],
+    modal: false,
+    stateItem: {
+      _id: "",
+      name: "",
+      action: 0,
+    },
+    stateDefaultItem: {
+      _id: "",
+      name: "",
+      action: 0,
     },
   }),
+
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "New" : "Edit";
     },
   },
 
@@ -146,44 +195,118 @@ export default {
 
   methods: {
     initialize() {
-      this.desserts = [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-        },
-      ];
+      axios
+        .get("/category/list")
+        .then((response) => {
+          //console.log(response);
+          this.categories = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.categories.indexOf(item);
       this.editedItem = Object.assign({}, item);
+      console.log(this.editedItem);
       this.dialog = true;
+      //this.$refs.form.resetValidation();
     },
 
     deleteItem(item) {
-      const index = this.desserts.indexOf(item);
+      const index = this.categories.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
-        this.desserts.splice(index, 1);
+        this.categories.splice(index, 1);
     },
 
     close() {
       this.dialog = false;
+      /* this.editedItem = this.defaultItem;
+      this.editedIndex = -1; */
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
+        this.$refs.form.resetValidation();
       }, 300);
     },
 
     save() {
+      if (!this.$refs.form.validate()) {
+        return;
+      }
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        //Edit category
+        console.log(this.editedItem);
+        axios
+          .put("/category/update", {
+            _id: this.editedItem._id,
+            name: this.editedItem.name,
+            description: this.editedItem.description,
+          })
+          .then((response) => {
+            this.close();
+            this.initialize();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       } else {
-        this.desserts.push(this.editedItem);
+        //New category
+        console.log(this.editedItem);
+        axios
+          .post("/category/add", {
+            name: this.editedItem.name,
+            description: this.editedItem.description,
+          })
+          .then((response) => {
+            this.close();
+            this.initialize();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        //this.categories.push(this.editedItem);
       }
       this.close();
+    },
+    activateDeactivate(action, item) {
+      this.modal = true;
+      this.stateItem._id = item._id;
+      this.stateItem.name = item.name;
+      this.stateItem.action = action;
+    },
+    closeModal() {
+      this.modal = false;
+      setTimeout(() => {
+        this.stateItem = Object.assign({}, this.stateDefaultItem);
+      }, 300);
+    },
+    activate() {
+      axios
+        .put("/category/activate", {
+          _id: this.stateItem._id,
+        })
+        .then((response) => {
+          this.closeModal();
+          this.initialize();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    deactivate() {
+      axios
+        .put("/category/deactivate", {
+          _id: this.stateItem._id,
+        })
+        .then((response) => {
+          this.closeModal();
+          this.initialize();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };

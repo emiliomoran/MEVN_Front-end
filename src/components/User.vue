@@ -3,13 +3,13 @@
     <v-flex>
       <v-data-table
         :headers="headers"
-        :items="categories"
+        :items="users"
         :search="search"
         class="elevation-1"
       >
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-toolbar-title>Categories</v-toolbar-title>
+            <v-toolbar-title>Users</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field
@@ -34,6 +34,15 @@
                     <v-form ref="form" v-model="valid">
                       <v-row>
                         <v-col cols="12" sm="12" md="12">
+                          <v-select
+                            v-model="editedItem.rol"
+                            :item="roles"
+                            label="Rol"
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
                           <v-text-field
                             v-model="editedItem.name"
                             :counter="50"
@@ -45,11 +54,66 @@
                       </v-row>
                       <v-row>
                         <v-col cols="12" sm="12" md="12">
+                          <v-select
+                            v-model="editedItem.doc_type"
+                            :item="doc_types"
+                            label="Doc Type"
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
                           <v-text-field
-                            v-model="editedItem.description"
-                            :counter="255"
-                            :rules="descriptionRules"
-                            label="Description"
+                            v-model="editedItem.doc_num"
+                            :counter="50"
+                            :rules="nameRules"
+                            label="Doc Number"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field
+                            v-model="editedItem.address"
+                            :counter="50"
+                            :rules="nameRules"
+                            label="Address"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field
+                            v-model="editedItem.phone"
+                            :counter="50"
+                            :rules="nameRules"
+                            label="Phone"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field
+                            v-model="editedItem.email"
+                            :counter="50"
+                            :rules="nameRules"
+                            label="Email"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field
+                            type="password"
+                            v-model="editedItem.password"
+                            :counter="50"
+                            :rules="nameRules"
+                            label="Password"
+                            required
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -138,23 +202,41 @@ export default {
   data: () => ({
     dialog: false,
     search: "",
-    categories: [],
+    users: [],
+    roles: ["Admin", "Grocer", "Seller"],
+    doc_types: ["DNI", "RUC", "PASAPORTE", "CEDULA"],
     headers: [
+      { text: "Rol", value: "rol", sortable: true },
       { text: "Name", value: "name", sortable: true },
-      { text: "Description", value: "description", sortable: false },
-      { text: "State", value: "state", sortable: false },
+      { text: "Doc Type", value: "doc_type", sortable: true },
+      { text: "Doc Number", value: "doc_num", sortable: false },
+      { text: "Address", value: "address", sortable: false },
+      { text: "Phone", value: "phone", sortable: false },
+      { text: "Email", value: "email", sortable: false },
       { text: "Actions", value: "actions", sortable: false },
     ],
     editedIndex: -1,
     editedItem: {
       _id: "",
       name: "",
-      description: "",
+      rol: "",
+      doc_type: "",
+      doc_num: "",
+      address: "",
+      phone: "",
+      email: "",
+      password: "",
     },
     defaultItem: {
       _id: "",
       name: "",
-      description: "",
+      rol: "",
+      doc_type: "",
+      doc_num: "",
+      address: "",
+      phone: "",
+      email: "",
+      password: "",
     },
     valid: true,
     nameRules: [
@@ -202,10 +284,10 @@ export default {
         headers: headers,
       };
       axios
-        .get("/category/list", configuration)
+        .get("/user/list", configuration)
         .then((response) => {
           //console.log(response);
-          this.categories = response.data;
+          this.users = response.data;
         })
         .catch((error) => {
           console.log(error);

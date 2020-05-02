@@ -4,10 +4,11 @@
       v-model="drawer"
       :clipped="$vuetify.breakpoint.lgAndUp"
       app
+      v-if="logged"
     >
       <v-list dense>
         <!--Home-->
-        <template>
+        <template v-if="isAdmin || isGrocer || isSeller">
           <v-list-item :to="{ name: 'Home' }">
             <v-list-item-action>
               <v-icon>home</v-icon>
@@ -18,7 +19,7 @@
           </v-list-item>
         </template>
         <!--Warehouse-->
-        <template>
+        <template v-if="isAdmin || isGrocer">
           <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
@@ -56,7 +57,7 @@
           </v-list-group>
         </template>
         <!--Purchases-->
-        <template>
+        <template v-if="isAdmin || isGrocer">
           <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
@@ -94,7 +95,7 @@
           </v-list-group>
         </template>
         <!--Sells-->
-        <template>
+        <template v-if="isAdmin || isSeller">
           <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
@@ -132,7 +133,7 @@
           </v-list-group>
         </template>
         <!--Access-->
-        <template>
+        <template v-if="isAdmin">
           <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
@@ -142,7 +143,7 @@
               </v-list-item-content>
             </v-list-item>
             <!--User-->
-            <v-list-item :to="{ name: '' }">
+            <v-list-item :to="{ name: 'User' }">
               <v-list-item-action>
                 <v-icon>
                   table_chart
@@ -157,7 +158,7 @@
           </v-list-group>
         </template>
         <!--Consult-->
-        <template>
+        <template v-if="isAdmin || isGrocer || isSeller">
           <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
@@ -208,8 +209,11 @@
         <span class="hidden-sm-and-down">System</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon>
+      <v-btn @click="logout()" icon v-if="logged">
         <v-icon>logout</v-icon>
+      </v-btn>
+      <v-btn :to="{ name: 'Login' }" icon v-else>
+        <v-icon>apps</v-icon>
       </v-btn>
     </v-app-bar>
     <v-content>
@@ -231,7 +235,29 @@
 export default {
   name: "App",
   data: () => ({
-    drawer: null,
+    drawer: true,
   }),
+  computed: {
+    logged() {
+      return this.$store.state.user;
+    },
+    isAdmin() {
+      return this.$store.state.user && this.$store.state.user.rol === "Admin";
+    },
+    isGrocer() {
+      return this.$store.state.user && this.$store.state.user.rol === "Grocer";
+    },
+    isSeller() {
+      return this.$store.state.user && this.$store.state.user.rol === "Seller";
+    },
+  },
+  created() {
+    this.$store.dispatch("autoLogin");
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch("logout");
+    },
+  },
 };
 </script>

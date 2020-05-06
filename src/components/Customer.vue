@@ -1,10 +1,10 @@
 <template>
   <v-layout align-start>
     <v-flex>
-      <v-data-table :headers="headers" :items="users" :search="search" class="elevation-1">
+      <v-data-table :headers="headers" :items="persons" :search="search" class="elevation-1">
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-toolbar-title>Users</v-toolbar-title>
+            <v-toolbar-title>Customers</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field
@@ -27,16 +27,6 @@
                 <v-card-text>
                   <v-container>
                     <v-form ref="form" v-model="valid">
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-select
-                            v-model="editedItem.rol"
-                            :items="roles"
-                            :rules="[v => !!v || 'Rol is required']"
-                            label="Rol"
-                          ></v-select>
-                        </v-col>
-                      </v-row>
                       <v-row>
                         <v-col cols="12" sm="12" md="12">
                           <v-text-field
@@ -98,18 +88,6 @@
                             :counter="50"
                             :rules="emailRules"
                             label="Email"
-                            required
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-text-field
-                            type="password"
-                            v-model="editedItem.password"
-                            :counter="64"
-                            :rules="passwordRules"
-                            label="Password"
                             required
                           ></v-text-field>
                         </v-col>
@@ -189,11 +167,10 @@ export default {
   data: () => ({
     dialog: false,
     search: "",
-    users: [],
-    roles: ["Admin", "Grocer", "Seller"],
+    persons: [],
     doc_types: ["DNI", "RUC", "PASAPORTE", "CEDULA"],
     headers: [
-      { text: "Rol", value: "rol", sortable: true },
+      { text: "Person Type", value: "person_type", sortable: false },
       { text: "Name", value: "name", sortable: true },
       { text: "Doc Type", value: "doc_type", sortable: true },
       { text: "Doc Number", value: "doc_num", sortable: false },
@@ -207,24 +184,22 @@ export default {
     editedItem: {
       _id: "",
       name: "",
-      rol: "",
+      person_type: "Customer",
       doc_type: "",
       doc_num: "",
       address: "",
       phone: "",
-      email: "",
-      password: ""
+      email: ""
     },
     defaultItem: {
       _id: "",
       name: "",
-      rol: "",
+      person_type: "Customer",
       doc_type: "",
       doc_num: "",
       address: "",
       phone: "",
-      email: "",
-      password: ""
+      email: ""
     },
     valid: true,
     nameRules: [
@@ -246,10 +221,6 @@ export default {
     emailRules: [
       v => !!v || "Email is required",
       v => (v && v.length <= 50) || "Email must be less than 50 characters"
-    ],
-    passwordRules: [
-      v => !!v || "Password is required",
-      v => (v && v.length <= 64) || "Password must be less than 64 characters"
     ],
     modal: false,
     stateItem: {
@@ -289,10 +260,10 @@ export default {
         headers: headers
       };
       axios
-        .get("/user/list", configuration)
+        .get("/person/list-customers", configuration)
         .then(response => {
           //console.log(response);
-          this.users = response.data;
+          this.persons = response.data;
         })
         .catch(error => {
           console.log(error);
@@ -300,7 +271,7 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.users.indexOf(item);
+      this.editedIndex = this.persons.indexOf(item);
       this.editedItem = Object.assign({}, item);
       console.log(this.editedItem);
       this.dialog = true;
@@ -339,17 +310,16 @@ export default {
         console.log(this.editedItem);
         axios
           .put(
-            "/user/update",
+            "/person/update",
             {
               _id: this.editedItem._id,
               name: this.editedItem.name,
-              rol: this.editedItem.rol,
+              person_type: this.editedItem.person_type,
               doc_type: this.editedItem.doc_type,
               doc_num: this.editedItem.doc_num,
               address: this.editedItem.address,
               phone: this.editedItem.phone,
-              email: this.editedItem.email,
-              password: this.editedItem.password
+              email: this.editedItem.email
             },
             configuration
           )
@@ -365,10 +335,10 @@ export default {
         //console.log(this.editedItem);
         axios
           .post(
-            "/user/add",
+            "/person/add",
             {
               name: this.editedItem.name,
-              rol: this.editedItem.rol,
+              person_type: this.editedItem.person_type,
               doc_type: this.editedItem.doc_type,
               doc_num: this.editedItem.doc_num,
               address: this.editedItem.address,
@@ -410,7 +380,7 @@ export default {
       };
       axios
         .put(
-          "/user/activate",
+          "/person/activate",
           {
             _id: this.stateItem._id
           },
@@ -433,7 +403,7 @@ export default {
       };
       axios
         .put(
-          "/user/deactivate",
+          "/person/deactivate",
           {
             _id: this.stateItem._id
           },

@@ -1,10 +1,10 @@
 <template>
   <v-layout align-start>
     <v-flex>
-      <v-data-table :headers="headers" :items="users" :search="search" class="elevation-1">
+      <v-data-table :headers="headers" :items="items" :search="search" class="elevation-1">
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-toolbar-title>Users</v-toolbar-title>
+            <v-toolbar-title>Items</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field
@@ -30,11 +30,21 @@
                       <v-row>
                         <v-col cols="12" sm="12" md="12">
                           <v-select
-                            v-model="editedItem.rol"
-                            :items="roles"
-                            :rules="[v => !!v || 'Rol is required']"
-                            label="Rol"
+                            v-model="editedItem.category"
+                            :items="categories"
+                            :rules="[v => !!v || 'Category is required']"
+                            label="Category"
                           ></v-select>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field
+                            v-model="editedItem.code"
+                            :counter="64"
+                            :rules="codeRules"
+                            label="Code"
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -50,21 +60,21 @@
                       </v-row>
                       <v-row>
                         <v-col cols="12" sm="12" md="12">
-                          <v-select
-                            v-model="editedItem.doc_type"
-                            :items="doc_types"
-                            :rules="[v => !!v || 'Doc type is required']"
-                            label="Doc Type"
-                          ></v-select>
+                          <v-text-field
+                            v-model="editedItem.description"
+                            :counter="255"
+                            :rules="descriptionRules"
+                            label="Description"
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12" sm="12" md="12">
                           <v-text-field
-                            v-model="editedItem.doc_num"
-                            :counter="20"
-                            :rules="docNumberRules"
-                            label="Doc Number"
+                            type="number"
+                            v-model="editedItem.stock"
+                            :rules="stockRules"
+                            label="Stock"
                             required
                           ></v-text-field>
                         </v-col>
@@ -72,44 +82,10 @@
                       <v-row>
                         <v-col cols="12" sm="12" md="12">
                           <v-text-field
-                            v-model="editedItem.address"
-                            :counter="70"
-                            :rules="addressRules"
-                            label="Address"
-                            required
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-text-field
-                            v-model="editedItem.phone"
-                            :counter="20"
-                            :rules="phoneRules"
-                            label="Phone"
-                            required
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-text-field
-                            v-model="editedItem.email"
-                            :counter="50"
-                            :rules="emailRules"
-                            label="Email"
-                            required
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-text-field
-                            type="password"
-                            v-model="editedItem.password"
-                            :counter="64"
-                            :rules="passwordRules"
-                            label="Password"
+                            type="number"
+                            v-model="editedItem.price"
+                            :rules="priceRules"
+                            label="Price"
                             required
                           ></v-text-field>
                         </v-col>
@@ -189,67 +165,53 @@ export default {
   data: () => ({
     dialog: false,
     search: "",
-    users: [],
-    roles: ["Admin", "Grocer", "Seller"],
-    doc_types: ["DNI", "RUC", "PASAPORTE", "CEDULA"],
+    items: [],
     headers: [
-      { text: "Rol", value: "rol", sortable: true },
+      { text: "Code", value: "code", sortable: false },
       { text: "Name", value: "name", sortable: true },
-      { text: "Doc Type", value: "doc_type", sortable: true },
-      { text: "Doc Number", value: "doc_num", sortable: false },
-      { text: "Address", value: "address", sortable: false },
-      { text: "Phone", value: "phone", sortable: false },
-      { text: "Email", value: "email", sortable: false },
+      { text: "Category", value: "category.name", sortable: true },
+      { text: "Stock", value: "stock", sortable: false },
+      { text: "Price", value: "price", sortable: false },
+      { text: "Description", value: "description", sortable: false },
       { text: "State", value: "state", sortable: false },
       { text: "Actions", value: "actions", sortable: false }
     ],
     editedIndex: -1,
+    categories: [],
     editedItem: {
       _id: "",
+      category: "",
+      code: "",
       name: "",
-      rol: "",
-      doc_type: "",
-      doc_num: "",
-      address: "",
-      phone: "",
-      email: "",
-      password: ""
+      description: "",
+      price: 0,
+      stock: 0
     },
     defaultItem: {
       _id: "",
+      category: "",
+      code: "",
       name: "",
-      rol: "",
-      doc_type: "",
-      doc_num: "",
-      address: "",
-      phone: "",
-      email: "",
-      password: ""
+      description: "",
+      price: 0,
+      stock: 0
     },
     valid: true,
+    codeRules: [v => v.length <= 64 || "Code must be less than 64 characters"],
     nameRules: [
       v => !!v || "Name is required",
       v => (v && v.length <= 50) || "Name must be less than 50 characters"
     ],
-    docNumberRules: [
-      v => !!v || "Doc number is required",
-      v => (v && v.length <= 20) || "Doc number must be less than 20 characters"
+    descriptionRules: [
+      v => v.length <= 255 || "Description must be less than 255 characters"
     ],
-    addressRules: [
-      v => !!v || "Address is required",
-      v => (v && v.length <= 70) || "Address must be less than 70 characters"
+    stockRules: [
+      //v => !!v || "Stock is required",
+      v => v > 0 || "Stock must be greater than 0"
     ],
-    phoneRules: [
-      v => !!v || "Phone is required",
-      v => (v && v.length <= 20) || "Phone must be less than 20 characters"
-    ],
-    emailRules: [
-      v => !!v || "Email is required",
-      v => (v && v.length <= 50) || "Email must be less than 50 characters"
-    ],
-    passwordRules: [
-      v => !!v || "Password is required",
-      v => (v && v.length <= 64) || "Password must be less than 64 characters"
+    priceRules: [
+      //v => !!v || "Price is required",
+      v => v > 0 || "Price must be greater than 0"
     ],
     modal: false,
     stateItem: {
@@ -277,10 +239,36 @@ export default {
   },
 
   created() {
+    this.getCategories();
     this.initialize();
   },
 
   methods: {
+    getCategories() {
+      let categories = [];
+      let headers = {
+        Token: this.$store.state.token
+      };
+      let configuration = {
+        headers: headers
+      };
+      axios
+        .get("/category/list", configuration)
+        .then(response => {
+          //console.log(response);
+          //this.items = response.data;
+          categories = response.data;
+          categories.map(category => {
+            this.categories.push({
+              text: category.name,
+              value: category._id
+            });
+          });
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
     initialize() {
       let headers = {
         Token: this.$store.state.token
@@ -289,10 +277,10 @@ export default {
         headers: headers
       };
       axios
-        .get("/user/list", configuration)
+        .get("/item/list", configuration)
         .then(response => {
-          //console.log(response);
-          this.users = response.data;
+          console.log(response);
+          this.items = response.data;
         })
         .catch(error => {
           console.log(error);
@@ -300,17 +288,27 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.users.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedIndex = this.items.indexOf(item);
+      console.log(this.editedIndex);
+      console.log(item);
+      this.editedItem = {
+        _id: item._id,
+        category: item.category._id,
+        code: item.code,
+        name: item.name,
+        description: item.description,
+        price: item.price,
+        stock: item.stock
+      };
       console.log(this.editedItem);
       this.dialog = true;
       //this.$refs.form.resetValidation();
     },
 
     deleteItem(item) {
-      const index = this.categories.indexOf(item);
+      const index = this.items.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
-        this.categories.splice(index, 1);
+        this.items.splice(index, 1);
     },
 
     close() {
@@ -339,21 +337,20 @@ export default {
         console.log(this.editedItem);
         axios
           .put(
-            "/user/update",
+            "/item/update",
             {
               _id: this.editedItem._id,
+              category: this.editedItem.category,
+              code: this.editedItem.code,
               name: this.editedItem.name,
-              rol: this.editedItem.rol,
-              doc_type: this.editedItem.doc_type,
-              doc_num: this.editedItem.doc_num,
-              address: this.editedItem.address,
-              phone: this.editedItem.phone,
-              email: this.editedItem.email,
-              password: this.editedItem.password
+              description: this.editedItem.description,
+              price: this.editedItem.stock,
+              stock: this.editedItem.price
             },
             configuration
           )
           .then(response => {
+            console.log(response);
             this.close();
             this.initialize();
           })
@@ -362,19 +359,17 @@ export default {
           });
       } else {
         //New category
-        //console.log(this.editedItem);
+        console.log(this.editedItem);
         axios
           .post(
-            "/user/add",
+            "/item/add",
             {
+              category: this.editedItem.category,
+              code: this.editedItem.code,
               name: this.editedItem.name,
-              rol: this.editedItem.rol,
-              doc_type: this.editedItem.doc_type,
-              doc_num: this.editedItem.doc_num,
-              address: this.editedItem.address,
-              phone: this.editedItem.phone,
-              email: this.editedItem.email,
-              password: this.editedItem.password
+              description: this.editedItem.description,
+              price: this.editedItem.stock,
+              stock: this.editedItem.price
             },
             configuration
           )
@@ -385,7 +380,7 @@ export default {
           .catch(error => {
             console.log(error);
           });
-        //this.categories.push(this.editedItem);
+        //this.items.push(this.editedItem);
       }
       this.close();
     },
@@ -410,7 +405,7 @@ export default {
       };
       axios
         .put(
-          "/user/activate",
+          "/item/activate",
           {
             _id: this.stateItem._id
           },
@@ -433,7 +428,7 @@ export default {
       };
       axios
         .put(
-          "/user/deactivate",
+          "/item/deactivate",
           {
             _id: this.stateItem._id
           },

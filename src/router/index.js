@@ -5,6 +5,9 @@ import Home from "../views/Home.vue";
 import Category from "../components/Category.vue";
 import Login from "../components/Login.vue";
 import User from "../components/User.vue";
+import Item from "../components/Item.vue";
+import Customer from "../components/Customer.vue";
+import Provider from "../components/Provider.vue";
 
 Vue.use(VueRouter);
 
@@ -42,6 +45,33 @@ const routes = [
     component: User,
     meta: {
       admin: true,
+    },
+  },
+  {
+    path: "/item",
+    name: "Item",
+    component: Item,
+    meta: {
+      admin: true,
+      gorcer: true,
+    },
+  },
+  {
+    path: "/customer",
+    name: "Customer",
+    component: Customer,
+    meta: {
+      admin: true,
+      seller: true,
+    },
+  },
+  {
+    path: "/provider",
+    name: "Provider",
+    component: Provider,
+    meta: {
+      admin: true,
+      grocer: true,
     },
   },
 ];

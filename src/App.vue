@@ -48,7 +48,7 @@
               </v-list-item-content>
             </v-list-item>
             <!--Incomes-->
-            <v-list-item :to="{ name: '' }">
+            <v-list-item :to="{ name: 'Income' }">
               <v-list-item-action>
                 <v-icon>table_chart</v-icon>
               </v-list-item-action>
@@ -165,7 +165,7 @@
         </v-slide-y-transition>
       </v-container>
     </v-content>
-    <v-footer padless absolute class="font-weight-medium" color="primary">
+    <v-footer padless class="font-weight-medium" color="primary">
       <v-col class="text-center" cols="12">
         {{ new Date().getFullYear() }} —
         <strong>OdemoIT</strong>

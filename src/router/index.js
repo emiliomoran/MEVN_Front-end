@@ -8,6 +8,7 @@ import User from "../components/User.vue";
 import Item from "../components/Item.vue";
 import Customer from "../components/Customer.vue";
 import Provider from "../components/Provider.vue";
+import Income from "../components/Income.vue";
 
 Vue.use(VueRouter);
 
@@ -69,6 +70,15 @@ const routes = [
     path: "/provider",
     name: "Provider",
     component: Provider,
+    meta: {
+      admin: true,
+      grocer: true,
+    },
+  },
+  {
+    path: "/income",
+    name: "Income",
+    component: Income,
     meta: {
       admin: true,
       grocer: true,

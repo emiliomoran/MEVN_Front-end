@@ -254,7 +254,7 @@ export default {
       { text: "User", value: "user.name", sortable: true },
       { text: "Provider", value: "person.name", sortable: true },
       { text: "Proof Type", value: "proof_type", sortable: true },
-      { text: "Proof Serie", value: "proof_num", sortable: false },
+      { text: "Proof Serie", value: "proof_serie", sortable: false },
       { text: "Proof Number", value: "proof_num", sortable: false },
       { text: "Date", value: "createdAt", sortable: false },
       { text: "Tax", value: "tax", sortable: false },

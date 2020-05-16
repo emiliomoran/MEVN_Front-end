@@ -9,6 +9,7 @@ import Item from "../components/Item.vue";
 import Customer from "../components/Customer.vue";
 import Provider from "../components/Provider.vue";
 import Income from "../components/Income.vue";
+import Sale from "../components/Sale.vue";
 
 Vue.use(VueRouter);
 
@@ -82,6 +83,15 @@ const routes = [
     meta: {
       admin: true,
       grocer: true,
+    },
+  },
+  {
+    path: "/sale",
+    name: "Sale",
+    component: Sale,
+    meta: {
+      admin: true,
+      seller: true,
     },
   },
 ];

@@ -1,9 +1,17 @@
 <template>
   <v-layout align-start>
     <v-flex>
-      <v-data-table :headers="headers" :items="items" :search="search" class="elevation-1">
+      <v-data-table
+        :headers="headers"
+        :items="items"
+        :search="search"
+        class="elevation-1"
+      >
         <template v-slot:top>
           <v-toolbar flat color="white">
+            <v-btn color="blue darken-1" text @click="generatePDF">
+              <v-icon>print</v-icon>
+            </v-btn>
             <v-toolbar-title>Items</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
@@ -32,7 +40,7 @@
                           <v-select
                             v-model="editedItem.category"
                             :items="categories"
-                            :rules="[v => !!v || 'Category is required']"
+                            :rules="[(v) => !!v || 'Category is required']"
                             label="Category"
                           ></v-select>
                         </v-col>
@@ -95,7 +103,9 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                  <v-btn color="blue darken-1" text @click="close"
+                    >Cancel</v-btn
+                  >
                   <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                 </v-card-actions>
               </v-card>
@@ -104,8 +114,12 @@
             <v-dialog v-model="modal" max-width="500px">
               <v-card>
                 <v-card-title>
-                  <span v-if="stateItem.action === 1" class="headline">Activate category</span>
-                  <span v-if="stateItem.action === 2" class="headline">Deactivate category</span>
+                  <span v-if="stateItem.action === 1" class="headline"
+                    >Activate category</span
+                  >
+                  <span v-if="stateItem.action === 2" class="headline"
+                    >Deactivate category</span
+                  >
                 </v-card-title>
                 <v-card-text>
                   Are you sure
@@ -115,19 +129,23 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="grey darken-1" text @click="closeModal">Cancel</v-btn>
+                  <v-btn color="grey darken-1" text @click="closeModal"
+                    >Cancel</v-btn
+                  >
                   <v-btn
                     v-if="stateItem.action === 1"
                     color="red darken-1"
                     text
                     @click="activate"
-                  >Activate</v-btn>
+                    >Activate</v-btn
+                  >
                   <v-btn
                     v-if="stateItem.action === 2"
                     color="red darken-1"
                     text
                     @click="deactivate"
-                  >Deactivate</v-btn>
+                    >Deactivate</v-btn
+                  >
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -161,6 +179,8 @@
 
 <script>
 import axios from "axios";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 export default {
   data: () => ({
     dialog: false,
@@ -174,7 +194,7 @@ export default {
       { text: "Price", value: "price", sortable: false },
       { text: "Description", value: "description", sortable: false },
       { text: "State", value: "state", sortable: false },
-      { text: "Actions", value: "actions", sortable: false }
+      { text: "Actions", value: "actions", sortable: false },
     ],
     editedIndex: -1,
     categories: [],
@@ -185,7 +205,7 @@ export default {
       name: "",
       description: "",
       price: 0,
-      stock: 0
+      stock: 0,
     },
     defaultItem: {
       _id: "",
@@ -194,48 +214,50 @@ export default {
       name: "",
       description: "",
       price: 0,
-      stock: 0
+      stock: 0,
     },
     valid: true,
-    codeRules: [v => v.length <= 64 || "Code must be less than 64 characters"],
+    codeRules: [
+      (v) => v.length <= 64 || "Code must be less than 64 characters",
+    ],
     nameRules: [
-      v => !!v || "Name is required",
-      v => (v && v.length <= 50) || "Name must be less than 50 characters"
+      (v) => !!v || "Name is required",
+      (v) => (v && v.length <= 50) || "Name must be less than 50 characters",
     ],
     descriptionRules: [
-      v => v.length <= 255 || "Description must be less than 255 characters"
+      (v) => v.length <= 255 || "Description must be less than 255 characters",
     ],
     stockRules: [
       //v => !!v || "Stock is required",
-      v => v > 0 || "Stock must be greater than 0"
+      (v) => v > 0 || "Stock must be greater than 0",
     ],
     priceRules: [
       //v => !!v || "Price is required",
-      v => v > 0 || "Price must be greater than 0"
+      (v) => v > 0 || "Price must be greater than 0",
     ],
     modal: false,
     stateItem: {
       _id: "",
       name: "",
-      action: 0
+      action: 0,
     },
     stateDefaultItem: {
       _id: "",
       name: "",
-      action: 0
-    }
+      action: 0,
+    },
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
-    }
+    },
   },
 
   watch: {
     dialog(val) {
       val || this.close();
-    }
+    },
   },
 
   created() {
@@ -247,42 +269,42 @@ export default {
     getCategories() {
       let categories = [];
       let headers = {
-        Token: this.$store.state.token
+        Token: this.$store.state.token,
       };
       let configuration = {
-        headers: headers
+        headers: headers,
       };
       axios
         .get("/category/list", configuration)
-        .then(response => {
+        .then((response) => {
           //console.log(response);
           //this.items = response.data;
           categories = response.data;
-          categories.map(category => {
+          categories.map((category) => {
             this.categories.push({
               text: category.name,
-              value: category._id
+              value: category._id,
             });
           });
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     },
     initialize() {
       let headers = {
-        Token: this.$store.state.token
+        Token: this.$store.state.token,
       };
       let configuration = {
-        headers: headers
+        headers: headers,
       };
       axios
         .get("/item/list", configuration)
-        .then(response => {
+        .then((response) => {
           console.log(response);
           this.items = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     },
@@ -298,7 +320,7 @@ export default {
         name: item.name,
         description: item.description,
         price: item.price,
-        stock: item.stock
+        stock: item.stock,
       };
       console.log(this.editedItem);
       this.dialog = true;
@@ -327,10 +349,10 @@ export default {
         return;
       }
       let headers = {
-        Token: this.$store.state.token
+        Token: this.$store.state.token,
       };
       let configuration = {
-        headers: headers
+        headers: headers,
       };
       if (this.editedIndex > -1) {
         //Edit category
@@ -345,16 +367,16 @@ export default {
               name: this.editedItem.name,
               description: this.editedItem.description,
               price: this.editedItem.stock,
-              stock: this.editedItem.price
+              stock: this.editedItem.price,
             },
             configuration
           )
-          .then(response => {
+          .then((response) => {
             console.log(response);
             this.close();
             this.initialize();
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       } else {
@@ -369,15 +391,15 @@ export default {
               name: this.editedItem.name,
               description: this.editedItem.description,
               price: this.editedItem.stock,
-              stock: this.editedItem.price
+              stock: this.editedItem.price,
             },
             configuration
           )
-          .then(response => {
+          .then((response) => {
             this.close();
             this.initialize();
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
         //this.items.push(this.editedItem);
@@ -398,50 +420,103 @@ export default {
     },
     activate() {
       let headers = {
-        Token: this.$store.state.token
+        Token: this.$store.state.token,
       };
       let configuration = {
-        headers: headers
+        headers: headers,
       };
       axios
         .put(
           "/item/activate",
           {
-            _id: this.stateItem._id
+            _id: this.stateItem._id,
           },
           configuration
         )
-        .then(response => {
+        .then((response) => {
           this.closeModal();
           this.initialize();
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     },
     deactivate() {
       let headers = {
-        Token: this.$store.state.token
+        Token: this.$store.state.token,
       };
       let configuration = {
-        headers: headers
+        headers: headers,
       };
       axios
         .put(
           "/item/deactivate",
           {
-            _id: this.stateItem._id
+            _id: this.stateItem._id,
           },
           configuration
         )
-        .then(response => {
+        .then((response) => {
           this.closeModal();
           this.initialize();
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
-    }
-  }
+    },
+    generatePDF() {
+      var doc = new jsPDF("p", "pt");
+
+      const columns = [
+        {
+          title: "Name",
+          dataKey: "name",
+        },
+        {
+          title: "Code",
+          dataKey: "code",
+        },
+        {
+          title: "Category",
+          dataKey: "category",
+        },
+        {
+          title: "Stock",
+          dataKey: "stock",
+        },
+        {
+          title: "Price",
+          dataKey: "price",
+        },
+      ];
+      const rows = [];
+      this.items.map((item) => {
+        rows.push({
+          name: item.name,
+          code: item.code,
+          category: item.category.name,
+          stock: item.stock,
+          price: item.price,
+        });
+      });
+
+      doc.autoTable({
+        body: rows,
+        columns: columns,
+        didDrawPage: () => {
+          doc.text("Items list", 40, 30);
+        },
+      });
+
+      /* doc.autoTable(columns, rows, {
+        margin: { top: 60 },
+        addPageContent: () => {
+          doc.text("Items list", 40, 30);
+        },
+      }); */
+
+      doc.save("Items.pdf");
+    },
+  },
 };
 </script>

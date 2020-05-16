@@ -72,16 +72,16 @@
           <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
-                <v-list-item-title>Sells</v-list-item-title>
+                <v-list-item-title>Sales</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <!--Sells-->
-            <v-list-item :to="{ name: '' }">
+            <v-list-item :to="{ name: 'Sale' }">
               <v-list-item-action>
                 <v-icon>table_chart</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Sells</v-list-item-title>
+                <v-list-item-title>Sales</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <!--Customers-->

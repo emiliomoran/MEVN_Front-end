@@ -1,12 +1,7 @@
 <template>
   <v-layout align-start>
     <v-flex>
-      <v-data-table
-        :headers="headers"
-        :items="categories"
-        :search="search"
-        class="elevation-1"
-      >
+      <v-data-table :headers="headers" :items="categories" :search="search" class="elevation-1">
         <template v-slot:top>
           <v-toolbar flat color="white">
             <v-toolbar-title>Categories</v-toolbar-title>
@@ -58,9 +53,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close"
-                    >Cancel</v-btn
-                  >
+                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
                   <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                 </v-card-actions>
               </v-card>
@@ -69,12 +62,8 @@
             <v-dialog v-model="modal" max-width="500px">
               <v-card>
                 <v-card-title>
-                  <span v-if="stateItem.action === 1" class="headline"
-                    >Activate category</span
-                  >
-                  <span v-if="stateItem.action === 2" class="headline"
-                    >Deactivate category</span
-                  >
+                  <span v-if="stateItem.action === 1" class="headline">Activate category</span>
+                  <span v-if="stateItem.action === 2" class="headline">Deactivate category</span>
                 </v-card-title>
                 <v-card-text>
                   Are you sure
@@ -84,23 +73,19 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="grey darken-1" text @click="closeModal"
-                    >Cancel</v-btn
-                  >
+                  <v-btn color="grey darken-1" text @click="closeModal">Cancel</v-btn>
                   <v-btn
                     v-if="stateItem.action === 1"
                     color="red darken-1"
                     text
                     @click="activate"
-                    >Activate</v-btn
-                  >
+                  >Activate</v-btn>
                   <v-btn
                     v-if="stateItem.action === 2"
                     color="red darken-1"
                     text
                     @click="deactivate"
-                    >Deactivate</v-btn
-                  >
+                  >Deactivate</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -122,7 +107,6 @@
           <template v-else>
             <v-icon small @click="activateDeactivate(1, item)">check</v-icon>
           </template>
-          <v-icon small @click="deleteItem(item)">delete</v-icon>
         </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -143,50 +127,50 @@ export default {
       { text: "Name", value: "name", sortable: true },
       { text: "Description", value: "description", sortable: false },
       { text: "State", value: "state", sortable: false },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false }
     ],
     editedIndex: -1,
     editedItem: {
       _id: "",
       name: "",
-      description: "",
+      description: ""
     },
     defaultItem: {
       _id: "",
       name: "",
-      description: "",
+      description: ""
     },
     valid: true,
     nameRules: [
-      (v) => !!v || "Name is required",
-      (v) => (v && v.length <= 50) || "Name must be less than 50 characters",
+      v => !!v || "Name is required",
+      v => (v && v.length <= 50) || "Name must be less than 50 characters"
     ],
     descriptionRules: [
-      (v) => v.length <= 255 || "Description must be less than 255 characters",
+      v => v.length <= 255 || "Description must be less than 255 characters"
     ],
     modal: false,
     stateItem: {
       _id: "",
       name: "",
-      action: 0,
+      action: 0
     },
     stateDefaultItem: {
       _id: "",
       name: "",
-      action: 0,
-    },
+      action: 0
+    }
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New" : "Edit";
-    },
+    }
   },
 
   watch: {
     dialog(val) {
       val || this.close();
-    },
+    }
   },
 
   created() {
@@ -196,18 +180,18 @@ export default {
   methods: {
     initialize() {
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       axios
         .get("/category/list", configuration)
-        .then((response) => {
+        .then(response => {
           //console.log(response);
           this.categories = response.data;
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
@@ -242,10 +226,10 @@ export default {
         return;
       }
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       if (this.editedIndex > -1) {
         //Edit category
@@ -256,15 +240,15 @@ export default {
             {
               _id: this.editedItem._id,
               name: this.editedItem.name,
-              description: this.editedItem.description,
+              description: this.editedItem.description
             },
             configuration
           )
-          .then((response) => {
+          .then(response => {
             this.close();
             this.initialize();
           })
-          .catch((error) => {
+          .catch(error => {
             console.log(error);
           });
       } else {
@@ -275,15 +259,15 @@ export default {
             "/category/add",
             {
               name: this.editedItem.name,
-              description: this.editedItem.description,
+              description: this.editedItem.description
             },
             configuration
           )
-          .then((response) => {
+          .then(response => {
             this.close();
             this.initialize();
           })
-          .catch((error) => {
+          .catch(error => {
             console.log(error);
           });
         //this.categories.push(this.editedItem);
@@ -304,50 +288,50 @@ export default {
     },
     activate() {
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       axios
         .put(
           "/category/activate",
           {
-            _id: this.stateItem._id,
+            _id: this.stateItem._id
           },
           configuration
         )
-        .then((response) => {
+        .then(response => {
           this.closeModal();
           this.initialize();
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
     deactivate() {
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       axios
         .put(
           "/category/deactivate",
           {
-            _id: this.stateItem._id,
+            _id: this.stateItem._id
           },
           configuration
         )
-        .then((response) => {
+        .then(response => {
           this.closeModal();
           this.initialize();
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
-    },
-  },
+    }
+  }
 };
 </script>

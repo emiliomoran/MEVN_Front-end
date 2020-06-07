@@ -29,19 +29,14 @@
               class="mb-2"
               v-if="showNew === 0"
               @click="showNewHandle()"
-              >New</v-btn
-            >
+            >New</v-btn>
 
             <!--Change state category modal-->
             <v-dialog v-model="modal" max-width="500px">
               <v-card>
                 <v-card-title>
-                  <span v-if="stateItem.action === 1" class="headline"
-                    >Activate sale</span
-                  >
-                  <span v-if="stateItem.action === 2" class="headline"
-                    >Deactivate sale</span
-                  >
+                  <span v-if="stateItem.action === 1" class="headline">Activate sale</span>
+                  <span v-if="stateItem.action === 2" class="headline">Deactivate sale</span>
                 </v-card-title>
                 <v-card-text>
                   Are you sure
@@ -51,23 +46,19 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="grey darken-1" text @click="closeModal"
-                    >Cancel</v-btn
-                  >
+                  <v-btn color="grey darken-1" text @click="closeModal">Cancel</v-btn>
                   <v-btn
                     v-if="stateItem.action === 1"
                     color="red darken-1"
                     text
                     @click="activate"
-                    >Activate</v-btn
-                  >
+                  >Activate</v-btn>
                   <v-btn
                     v-if="stateItem.action === 2"
                     color="red darken-1"
                     text
                     @click="deactivate"
-                    >Deactivate</v-btn
-                  >
+                  >Deactivate</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -79,7 +70,7 @@
                   <v-btn small fab dark color="teal" v-on="on">
                     <v-icon dark>list</v-icon>
                   </v-btn>
-                </template> -->
+                </template>-->
                 <v-card>
                   <v-card-title>
                     <v-btn color="blue darken-1" text @click="generatePDF">
@@ -98,16 +89,21 @@
                         </div>
                         <div id="datos">
                           <p id="encabezado">
-                            <b>IncanatoIT</b><br />José Gálvez 1368, Chongoyape
-                            - Chiclayo, Perú<br />Telefono:(+51)931742904<br />Email:jcarlos.ad7@gmail.com
+                            <b>IncanatoIT</b>
+                            <br />José Gálvez 1368, Chongoyape
+                            - Chiclayo, Perú
+                            <br />Telefono:(+51)931742904
+                            <br />Email:jcarlos.ad7@gmail.com
                           </p>
                         </div>
                         <div id="fact">
                           <p>
-                            {{ editedItem.proof_type }}<br />
+                            {{ editedItem.proof_type }}
+                            <br />
                             {{ editedItem.proof_serie }}-{{
-                              editedItem.proof_num
-                            }}<br />
+                            editedItem.proof_num
+                            }}
+                            <br />
                             {{ editedItem.proofDate }}
                           </p>
                         </div>
@@ -119,15 +115,17 @@
                             <tbody>
                               <tr>
                                 <td id="cliente">
-                                  <strong
-                                    >Sr(a). {{ editedItem.person.name }}</strong
-                                  ><br />
+                                  <strong>Sr(a). {{ editedItem.person.name }}</strong>
+                                  <br />
                                   <strong>Documento:</strong>
-                                  {{ editedItem.person.doc_num }}<br />
+                                  {{ editedItem.person.doc_num }}
+                                  <br />
                                   <strong>Dirección:</strong>
-                                  {{ editedItem.person.address }} <br />
-                                  <strong>Teléfono:</strong
-                                  >{{ editedItem.person.phone }}<br />
+                                  {{ editedItem.person.address }}
+                                  <br />
+                                  <strong>Teléfono:</strong>
+                                  {{ editedItem.person.phone }}
+                                  <br />
                                   <strong>Email:</strong>
                                   {{ editedItem.person.email }}
                                 </td>
@@ -150,25 +148,14 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <tr
-                                v-for="det in editedItem.details"
-                                :key="det._id"
-                              >
-                                <td style="text-align:center;">
-                                  {{ det.amount }}
-                                </td>
-                                <td>
-                                  {{ det.item }}
-                                </td>
-                                <td style="text-align:right;">
-                                  {{ det.price }}
-                                </td>
-                                <td style="text-align:right;">
-                                  {{ det.discount }}
-                                </td>
-                                <td style="text-align:right;">
-                                  {{ det.amount * det.price - det.discount }}
-                                </td>
+                              <tr v-for="det in editedItem.details" :key="det._id">
+                                <td style="text-align:center;">{{ det.amount }}</td>
+                                <td>{{ det.item }}</td>
+                                <td style="text-align:right;">{{ det.price }}</td>
+                                <td style="text-align:right;">{{ det.discount }}</td>
+                                <td
+                                  style="text-align:right;"
+                                >{{ det.amount * det.price - det.discount }}</td>
                               </tr>
                             </tbody>
                             <tfoot>
@@ -180,9 +167,9 @@
                                 <th style="text-align:right;">
                                   $
                                   {{
-                                    (partialTotal = (total - taxTotal).toFixed(
-                                      2
-                                    ))
+                                  (partialTotal = (total - taxTotal).toFixed(
+                                  2
+                                  ))
                                   }}
                                 </th>
                               </tr>
@@ -190,16 +177,14 @@
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th style="text-align:right;">
-                                  IVA ({{ editedItem.tax }})
-                                </th>
+                                <th style="text-align:right;">IVA ({{ editedItem.tax }})</th>
                                 <th style="text-align:right;">
                                   $
                                   {{
-                                    (taxTotal = (
-                                      (total * editedItem.tax) /
-                                      (1 + editedItem.tax)
-                                    ).toFixed(2))
+                                  (taxTotal = (
+                                  (total * editedItem.tax) /
+                                  (1 + editedItem.tax)
+                                  ).toFixed(2))
                                   }}
                                 </th>
                               </tr>
@@ -208,9 +193,7 @@
                                 <th></th>
                                 <th></th>
                                 <th style="text-align:right;">TOTAL</th>
-                                <th style="text-align:right;">
-                                  $ {{ (total = calculateTotal) }}
-                                </th>
+                                <th style="text-align:right;">$ {{ (total = calculateTotal) }}</th>
                               </tr>
                             </tfoot>
                           </table>
@@ -220,16 +203,16 @@
                       <br />
                       <footer>
                         <div id="gracias">
-                          <p><b>Gracias por su compra!</b></p>
+                          <p>
+                            <b>Gracias por su compra!</b>
+                          </p>
                         </div>
                       </footer>
                     </div>
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="hiddeProof"
-                      >Cancel</v-btn
-                    >
+                    <v-btn color="blue darken-1" text @click="hiddeProof">Cancel</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -266,7 +249,7 @@
       <v-container v-if="showNew">
         <v-form ref="form" v-model="valid">
           <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="4" lg="4">
               <v-select
                 v-model="editedItem.proof_type"
                 :items="proof_types"
@@ -274,9 +257,7 @@
                 label="Proof Type"
               ></v-select>
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="4" lg="4">
               <v-text-field
                 v-model="editedItem.proof_serie"
                 :counter="7"
@@ -285,9 +266,7 @@
                 required
               ></v-text-field>
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="4" lg="4">
               <v-text-field
                 v-model="editedItem.proof_num"
                 :counter="10"
@@ -298,7 +277,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="8" lg="8">
               <v-autocomplete
                 v-model="editedItem.person"
                 :items="persons"
@@ -306,9 +285,7 @@
                 label="Customer"
               ></v-autocomplete>
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="4" lg="4">
               <v-text-field
                 type="number"
                 v-model="editedItem.tax"
@@ -319,75 +296,69 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" sm="12" md="12">
-              <v-text-field
-                v-model="code"
-                label="Code"
-                @keyup.enter="searchCode()"
-              ></v-text-field>
-              <v-flex class="red--text" v-if="errorItem">{{
+            <v-col cols="12" sm="12" md="4" lg="4">
+              <v-text-field v-model="code" label="Code" @keyup.enter="searchCode()"></v-text-field>
+              <v-flex class="red--text" v-if="errorItem">
+                {{
                 errorItem
-              }}</v-flex>
+                }}
+              </v-flex>
+            </v-col>
+            <v-col cols="12" sm="12" md="2" lg="2">
+              <v-dialog v-model="dialog" max-width="800px">
+                <template v-slot:activator="{ on }">
+                  <v-btn small fab dark color="teal" v-on="on">
+                    <v-icon dark>list</v-icon>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">Select a item</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-text-field
+                        v-model="text"
+                        class="text-xs-center"
+                        append-icon="search"
+                        label="Search"
+                        @keyup.enter="getItems()"
+                      ></v-text-field>
+                      <template>
+                        <v-row>
+                          <v-col cols="12" sm="12" md="12">
+                            <v-data-table
+                              :headers="headersItems"
+                              :items="items"
+                              class="elevation-1"
+                            >
+                              <template v-slot:top></template>
+                              <template v-slot:item.state="{ item }">
+                                <div v-if="item.state">
+                                  <span class="blue--text">Active</span>
+                                </div>
+                                <div v-else>
+                                  <span class="red--text">Inactive</span>
+                                </div>
+                              </template>
+                              <template v-slot:item.actions="{ item }">
+                                <v-icon small @click="addToDetails(item)">add</v-icon>
+                              </template>
+                            </v-data-table>
+                          </v-col>
+                        </v-row>
+                      </template>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="closeModalItem()">Cancel</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
             </v-col>
           </v-row>
-          <v-row>
-            <!--Dialog items-->
-            <v-dialog v-model="dialog" max-width="800px">
-              <template v-slot:activator="{ on }">
-                <v-btn small fab dark color="teal" v-on="on">
-                  <v-icon dark>list</v-icon>
-                </v-btn>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="headline">Select a item</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-text-field
-                      v-model="text"
-                      class="text-xs-center"
-                      append-icon="search"
-                      label="Search"
-                      @keyup.enter="getItems()"
-                    ></v-text-field>
-                    <template>
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-data-table
-                            :headers="headersItems"
-                            :items="items"
-                            class="elevation-1"
-                          >
-                            <template v-slot:top></template>
-                            <template v-slot:item.state="{ item }">
-                              <div v-if="item.state">
-                                <span class="blue--text">Active</span>
-                              </div>
-                              <div v-else>
-                                <span class="red--text">Inactive</span>
-                              </div>
-                            </template>
-                            <template v-slot:item.actions="{ item }">
-                              <v-icon small @click="addToDetails(item)"
-                                >add</v-icon
-                              >
-                            </template>
-                          </v-data-table>
-                        </v-col>
-                      </v-row>
-                    </template>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="closeModalItem()"
-                    >Cancel</v-btn
-                  >
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-row>
+          <v-flex class="text-xs-right">Items List</v-flex>
           <v-row>
             <template>
               <v-col cols="12" sm="12" md="12">
@@ -399,62 +370,46 @@
                 >
                   <template v-slot:top></template>
                   <template v-slot:item.amount="{ item }">
-                    <v-text-field
-                      v-model="item.amount"
-                      type="number"
-                    ></v-text-field>
+                    <v-text-field v-model="item.amount" type="number"></v-text-field>
                   </template>
                   <template v-slot:item.price="{ item }">
-                    <v-text-field
-                      v-model="item.price"
-                      type="number"
-                    ></v-text-field>
+                    <v-text-field v-model="item.price" type="number"></v-text-field>
                   </template>
                   <template v-slot:item.discount="{ item }">
-                    <v-text-field
-                      v-model="item.discount"
-                      type="number"
-                    ></v-text-field>
+                    <v-text-field v-model="item.discount" type="number"></v-text-field>
                   </template>
-                  <template v-slot:item.subTotal="{ item }"
-                    >$ {{ item.amount * item.price - item.discount }}</template
-                  >
+                  <template
+                    v-slot:item.subTotal="{ item }"
+                  >$ {{ item.amount * item.price - item.discount }}</template>
                   <template v-slot:item.actions="{ item }">
-                    <v-icon
-                      small
-                      @click="removeFromDetails(editedItem.details, item)"
-                      >delete</v-icon
-                    >
+                    <v-icon small @click="removeFromDetails(editedItem.details, item)">delete</v-icon>
                   </template>
                 </v-data-table>
-                <v-spacer></v-spacer>
-                <v-flex class="text-xs-right">
-                  <strong>Partial Total:</strong>
-                  $ {{ (partialTotal = (total - taxTotal).toFixed(2)) }}
-                </v-flex>
-                <v-flex class="text-xs-right">
-                  <strong>Tax Total:</strong>
-                  $
-                  {{
-                    (taxTotal = (
-                      (total * editedItem.tax) /
-                      (1 + editedItem.tax)
-                    ).toFixed(2))
-                  }}
-                </v-flex>
-                <v-flex class="text-xs-right">
-                  <strong>Total:</strong>
-                  $ {{ (total = calculateTotal) }}
-                </v-flex>
               </v-col>
             </template>
           </v-row>
+          <v-flex class="text-xs-right">
+            <strong>Partial Total:</strong>
+            $ {{ (partialTotal = (total - taxTotal).toFixed(2)) }}
+          </v-flex>
+          <v-flex class="text-xs-right">
+            <strong>Tax Total:</strong>
+            $
+            {{
+            (taxTotal = (
+            (total * editedItem.tax) /
+            (1 + editedItem.tax)
+            ).toFixed(2))
+            }}
+          </v-flex>
+          <v-flex class="text-xs-right">
+            <strong>Total:</strong>
+            $ {{ (total = calculateTotal) }}
+          </v-flex>
           <v-row>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-            <v-btn v-if="!edited" color="blue darken-1" text @click="save"
-              >Save</v-btn
-            >
+            <v-btn v-if="!edited" color="blue darken-1" text @click="save">Save</v-btn>
           </v-row>
         </v-form>
       </v-container>
@@ -484,7 +439,7 @@ export default {
       { text: "Tax", value: "tax", sortable: false },
       { text: "Total", value: "total", sortable: false },
       { text: "State", value: "state", sortable: false },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false }
     ],
     headersDetails: [
       { text: "Item", value: "item", sortable: false },
@@ -492,7 +447,7 @@ export default {
       { text: "Price", value: "price", sortable: false },
       { text: "Discount", value: "discount", sortable: false },
       { text: "Sub Total", value: "subTotal", sortable: false },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false }
     ],
     headersItems: [
       { text: "Code", value: "code", sortable: false },
@@ -502,7 +457,7 @@ export default {
       { text: "Price", value: "price", sortable: false },
       { text: "Description", value: "description", sortable: false },
       { text: "State", value: "state", sortable: false },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false }
     ],
     edited: false,
     code: "",
@@ -515,7 +470,7 @@ export default {
       proof_serie: "",
       proof_num: "",
       tax: 0.12,
-      details: [],
+      details: []
     },
     defaultItem: {
       person: "",
@@ -523,20 +478,19 @@ export default {
       proof_serie: "",
       proof_num: "",
       tax: 0.12,
-      details: [],
+      details: []
     },
     valid: true,
     proofSerieRules: [
-      (v) => !!v || "Proof serie is required",
-      (v) =>
-        (v && v.length <= 7) || "Proof serie must be less than 7 characters",
+      v => !!v || "Proof serie is required",
+      v => (v && v.length <= 7) || "Proof serie must be less than 7 characters"
     ],
     proofNumberRules: [
-      (v) => !!v || "Proof number is required",
-      (v) =>
-        (v && v.length <= 10) || "Proof number must be less than 10 characters",
+      v => !!v || "Proof number is required",
+      v =>
+        (v && v.length <= 10) || "Proof number must be less than 10 characters"
     ],
-    taxRules: [(v) => v > 0 || "Tax must be greater than 0"],
+    taxRules: [v => v > 0 || "Tax must be greater than 0"],
     modal: false,
     partialTotal: 0,
     taxTotal: 0,
@@ -544,14 +498,14 @@ export default {
     stateItem: {
       _id: "",
       name: "",
-      action: 0,
+      action: 0
     },
     stateDefaultItem: {
       _id: "",
       name: "",
-      action: 0,
+      action: 0
     },
-    proofModal: false,
+    proofModal: false
   }),
 
   computed: {
@@ -565,13 +519,13 @@ export default {
       }
       console.log(result);
       return result;
-    },
+    }
   },
 
   watch: {
     dialog(val) {
       val || this.closeModalItem();
-    },
+    }
   },
 
   created() {
@@ -582,18 +536,18 @@ export default {
   methods: {
     initialize() {
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       axios
         .get("/sale/list", configuration)
-        .then((response) => {
+        .then(response => {
           //console.log(response);
           this.sales = response.data;
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
@@ -601,25 +555,25 @@ export default {
     getPersons() {
       let persons = [];
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       axios
         .get("/person/list-customers", configuration)
-        .then((response) => {
+        .then(response => {
           //console.log(response);
           //this.items = response.data;
           persons = response.data;
-          persons.map((category) => {
+          persons.map(category => {
             this.persons.push({
               text: category.name,
-              value: category._id,
+              value: category._id
             });
           });
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
@@ -627,18 +581,18 @@ export default {
     getItems() {
       this.items = [];
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       axios
         .get("/item/list?value=" + this.text, configuration)
-        .then((response) => {
+        .then(response => {
           console.log(response);
           this.items = response.data;
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
@@ -646,18 +600,18 @@ export default {
     getDetails(id) {
       this.items = [];
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       axios
         .get("/sale/query?_id=" + id, configuration)
-        .then((response) => {
+        .then(response => {
           console.log(response.data.details);
           this.editedItem.details = response.data.details;
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
@@ -680,18 +634,18 @@ export default {
     searchCode() {
       this.errorItem = "";
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       axios
         .get("/item/query-code?code=" + this.code, configuration)
-        .then((response) => {
+        .then(response => {
           console.log(response.data);
           this.addToDetails(response.data);
         })
-        .catch((error) => {
+        .catch(error => {
           this.errorItem = "Item not found";
         });
     },
@@ -707,7 +661,7 @@ export default {
           item: data.name,
           amount: 1,
           price: data.price,
-          discount: 0,
+          discount: 0
         });
         this.code = "";
       }
@@ -771,10 +725,10 @@ export default {
       }
 
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
 
       //New category
@@ -790,15 +744,15 @@ export default {
             proof_num: this.editedItem.proof_num,
             tax: this.editedItem.tax,
             total: this.total,
-            details: this.editedItem.details,
+            details: this.editedItem.details
           },
           configuration
         )
-        .then((response) => {
+        .then(response => {
           this.close();
           this.initialize();
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
       //this.categories.push(this.editedItem);
@@ -819,47 +773,47 @@ export default {
     },
     activate() {
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       axios
         .put(
           "/sale/activate",
           {
-            _id: this.stateItem._id,
+            _id: this.stateItem._id
           },
           configuration
         )
-        .then((response) => {
+        .then(response => {
           this.closeModal();
           this.initialize();
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
     deactivate() {
       let headers = {
-        Token: this.$store.state.token,
+        Token: this.$store.state.token
       };
       let configuration = {
-        headers: headers,
+        headers: headers
       };
       axios
         .put(
           "/sale/deactivate",
           {
-            _id: this.stateItem._id,
+            _id: this.stateItem._id
           },
           configuration
         )
-        .then((response) => {
+        .then(response => {
           this.closeModal();
           this.initialize();
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
@@ -880,7 +834,7 @@ export default {
     },
     generatePDF() {
       const quotes = document.getElementById("bill");
-      html2canvas(quotes).then((canvas) => {
+      html2canvas(quotes).then(canvas => {
         var imgData = canvas.toDataURL("image/png");
         var imgWidth = 210;
         var pageHeight = 295;
@@ -902,8 +856,8 @@ export default {
         }
         doc.save("proofSale.pdf");
       });
-    },
-  },
+    }
+  }
 };
 </script>
 

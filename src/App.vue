@@ -114,48 +114,17 @@
             </v-list-item>
           </v-list-group>
         </template>
-        <!--Consult-->
-        <template v-if="isAdmin || isGrocer || isSeller">
-          <v-list-group>
-            <v-list-item slot="activator">
-              <v-list-item-content>
-                <v-list-item-title>Consult</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <!--Purchases-->
-            <v-list-item :to="{ name: '' }">
-              <v-list-item-action>
-                <v-icon>table_chart</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Purchases</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <!--Sells-->
-            <v-list-item :to="{ name: '' }">
-              <v-list-item-action>
-                <v-icon>table_chart</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Sells</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-group>
-        </template>
       </v-list>
     </v-navigation-drawer>
 
     <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
       <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="logged"></v-app-bar-nav-icon>
         <span class="hidden-sm-and-down">System</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn @click="logout()" icon v-if="logged">
         <v-icon>logout</v-icon>
-      </v-btn>
-      <v-btn :to="{ name: 'Login' }" icon v-else>
-        <v-icon>apps</v-icon>
       </v-btn>
     </v-app-bar>
     <v-content>
@@ -166,10 +135,7 @@
       </v-container>
     </v-content>
     <v-footer padless class="font-weight-medium" color="primary">
-      <v-col class="text-center" cols="12">
-        {{ new Date().getFullYear() }} —
-        <strong>OdemoIT</strong>
-      </v-col>
+      <v-col class="text-center white--text" cols="12">{{ new Date().getFullYear() }} — Odemo IT</v-col>
     </v-footer>
   </v-app>
 </template>

@@ -84,7 +84,7 @@
       <v-container v-if="showNew">
         <v-form ref="form" v-model="valid">
           <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="4" lg="4">
               <v-select
                 v-model="editedItem.proof_type"
                 :items="proof_types"
@@ -92,9 +92,7 @@
                 label="Proof Type"
               ></v-select>
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="4" lg="4">
               <v-text-field
                 v-model="editedItem.proof_serie"
                 :counter="7"
@@ -103,9 +101,7 @@
                 required
               ></v-text-field>
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="4" lg="4">
               <v-text-field
                 v-model="editedItem.proof_num"
                 :counter="10"
@@ -116,7 +112,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="8" lg="8">
               <v-autocomplete
                 v-model="editedItem.person"
                 :items="persons"
@@ -124,9 +120,7 @@
                 label="Provider"
               ></v-autocomplete>
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="4" lg="4">
               <v-text-field
                 type="number"
                 v-model="editedItem.tax"
@@ -137,61 +131,65 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" sm="12" md="12">
+            <v-col cols="12" sm="12" md="4" lg="4">
               <v-text-field v-model="code" label="Code" @keyup.enter="searchCode()"></v-text-field>
               <v-flex class="red--text" v-if="errorItem">{{ errorItem }}</v-flex>
             </v-col>
+            <v-col cols="12" sm="12" md="2" lg="2">
+              <v-dialog v-model="dialog" max-width="800px">
+                <template v-slot:activator="{ on }">
+                  <v-btn small fab dark color="teal" v-on="on">
+                    <v-icon dark>list</v-icon>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">Select a item</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-text-field
+                        v-model="text"
+                        class="text-xs-center"
+                        append-icon="search"
+                        label="Search"
+                        @keyup.enter="getItems()"
+                      ></v-text-field>
+                      <template>
+                        <v-row>
+                          <v-col cols="12" sm="12" md="12">
+                            <v-data-table
+                              :headers="headersItems"
+                              :items="items"
+                              class="elevation-1"
+                            >
+                              <template v-slot:top></template>
+                              <template v-slot:item.state="{ item }">
+                                <div v-if="item.state">
+                                  <span class="blue--text">Active</span>
+                                </div>
+                                <div v-else>
+                                  <span class="red--text">Inactive</span>
+                                </div>
+                              </template>
+                              <template v-slot:item.actions="{ item }">
+                                <v-icon small @click="addToDetails(item)">add</v-icon>
+                              </template>
+                            </v-data-table>
+                          </v-col>
+                        </v-row>
+                      </template>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="closeModalItem()">Cancel</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-col>
           </v-row>
-          <v-row>
-            <!--Dialog items-->
-            <v-dialog v-model="dialog" max-width="800px">
-              <template v-slot:activator="{ on }">
-                <v-btn small fab dark color="teal" v-on="on">
-                  <v-icon dark>list</v-icon>
-                </v-btn>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="headline">Select a item</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-text-field
-                      v-model="text"
-                      class="text-xs-center"
-                      append-icon="search"
-                      label="Search"
-                      @keyup.enter="getItems()"
-                    ></v-text-field>
-                    <template>
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-data-table :headers="headersItems" :items="items" class="elevation-1">
-                            <template v-slot:top></template>
-                            <template v-slot:item.state="{ item }">
-                              <div v-if="item.state">
-                                <span class="blue--text">Active</span>
-                              </div>
-                              <div v-else>
-                                <span class="red--text">Inactive</span>
-                              </div>
-                            </template>
-                            <template v-slot:item.actions="{ item }">
-                              <v-icon small @click="addToDetails(item)">add</v-icon>
-                            </template>
-                          </v-data-table>
-                        </v-col>
-                      </v-row>
-                    </template>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="closeModalItem()">Cancel</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-row>
+          <v-flex class="text-xs-right">Items List</v-flex>
           <v-row>
             <template>
               <v-col cols="12" sm="12" md="12">
@@ -213,22 +211,21 @@
                     <v-icon small @click="removeFromDetails(editedItem.details, item)">delete</v-icon>
                   </template>
                 </v-data-table>
-                <v-spacer></v-spacer>
-                <v-flex class="text-xs-right">
-                  <strong>Partial Total:</strong>
-                  $ {{ partialTotal = (total - taxTotal).toFixed(2) }}
-                </v-flex>
-                <v-flex class="text-xs-right">
-                  <strong>Tax Total:</strong>
-                  $ {{ taxTotal = ((total * editedItem.tax)/(1 + editedItem.tax)).toFixed(2) }}
-                </v-flex>
-                <v-flex class="text-xs-right">
-                  <strong>Total:</strong>
-                  $ {{ total = calculateTotal }}
-                </v-flex>
               </v-col>
             </template>
           </v-row>
+          <v-flex class="text-xs-right">
+            <strong>Partial Total:</strong>
+            $ {{ partialTotal = (total - taxTotal).toFixed(2) }}
+          </v-flex>
+          <v-flex class="text-xs-right">
+            <strong>Tax Total:</strong>
+            $ {{ taxTotal = ((total * editedItem.tax)/(1 + editedItem.tax)).toFixed(2) }}
+          </v-flex>
+          <v-flex class="text-xs-right">
+            <strong>Total:</strong>
+            $ {{ total = calculateTotal }}
+          </v-flex>
           <v-row>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
